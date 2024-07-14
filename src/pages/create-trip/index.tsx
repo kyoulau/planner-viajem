@@ -4,6 +4,8 @@ import { InviteGuestsModel } from './invite-guests-modal'
 import { ConfirmmTripModal } from './confirm-trip-modal'
 import { DestinationAndDateStep } from '../steps/destination-and-date-step'
 import { InviteGuests } from '../steps/invite-guest-step'
+import { DateRange } from 'react-day-picker'
+import { api } from '../../lib/axios'
 
 export default function CreateTripPage() {
   const [isGuestOpen, setIsGuestOpen] = useState(false)
@@ -12,6 +14,13 @@ export default function CreateTripPage() {
     'diego@rocketseat.com.br',
     'john@acme.com'
   ])
+  // liftstateup
+  const [destination, setDestination] = useState('')
+  const [ownerName, setOwnerName] = useState('')
+  const [ownerEmail, setOwnerEmail] = useState('')
+  const [eventStartAndDate, setEventStartAndDate] = useState<DateRange | undefined>()
+
+
   const [isConfirmTripModalOpen,setIsConfirmTripModalOpen] = useState(false)
 
   function openInputGuest(){
@@ -67,9 +76,47 @@ export default function CreateTripPage() {
 
 const navigate = useNavigate()
 // Navegação com useNavitage do próprio react que redireciona para outra rota
-  function redirectToTripDetail(event: FormEvent<HTMLFormElement>){
+  async function redirectToTripDetail(event: FormEvent<HTMLFormElement>){
     event.preventDefault()
-    navigate("/trips/123")
+
+    // console.log(destionation)
+    // console.log(eventStartAndDate)
+    // console.log(ownerName)
+    // console.log(ownerEmail)
+
+    // Validações
+
+    if(!destination){
+      return
+    }
+
+    if(!eventStartAndDate){
+      return
+    }
+
+    if(!eventStartAndDate.from || !eventStartAndDate.to){
+      return
+    }
+
+    if(emailsAdd.length == 0){
+      return
+    }
+
+    if(!ownerName || !ownerEmail){
+      return
+    }
+
+    const response = await api.post('/trips', {
+      destination,
+      starts_at: eventStartAndDate.from,
+      ends_at: eventStartAndDate.to,
+      emails_to_invite: emailsAdd,
+      owner_name: ownerName,
+      owner_email: ownerEmail
+    })
+    
+    const {tripId} = response.data
+    navigate(`/trips/${tripId}`)
 
   }
   return (
@@ -86,6 +133,9 @@ const navigate = useNavigate()
               closeInputGuest={closeInputGuest}
               isGuestOpen={isGuestOpen}
               openInputGuest={openInputGuest}
+              setDestination={setDestination}
+              setEventStartAndDate={setEventStartAndDate}
+              eventStartAndDate={eventStartAndDate}
             />
 
           {isGuestOpen && (
@@ -114,6 +164,8 @@ const navigate = useNavigate()
         <ConfirmmTripModal 
           closeIsConfirmTripModalOpen={closeIsConfirmTripModalOpen}
           redirectToTripDetail={redirectToTripDetail}
+          setOwnerName={setOwnerName}
+          setOwnerEmail={setOwnerEmail}
         />
       )}
 

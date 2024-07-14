@@ -4,11 +4,16 @@ import { FormEvent } from "react"
 interface ConfirmmTripModalProps{
     closeIsConfirmTripModalOpen: () => void
     redirectToTripDetail: (event: FormEvent<HTMLFormElement>) => void
+    setOwnerName: (name: string) => void
+    setOwnerEmail: (email: string) => void
+    // Passa a função e o parametro que elas recebem
 
 }
 export function ConfirmmTripModal({
     closeIsConfirmTripModalOpen,
-    redirectToTripDetail
+    redirectToTripDetail,
+    setOwnerName,
+    setOwnerEmail
 }: ConfirmmTripModalProps){
     return(
         <div className='fixed inset-0 bg-black/60 flex items-center justify-center'>
@@ -31,6 +36,7 @@ export function ConfirmmTripModal({
               <input
                   type="text"
                   name="nome"
+                  onChange={event => setOwnerName(event.target.value)}
                   placeholder="Seu nome completo"
                   className="bg-transparent text-lg placeholder-zinc-400 outline-none flex-1 text-zinc-300"
                 />
@@ -40,6 +46,7 @@ export function ConfirmmTripModal({
               <input
                   type="text"
                   name="email"
+                  onChange={event => setOwnerEmail(event.target.value)}
                   placeholder="Seu e-mail pessoal"
                   className="bg-transparent text-lg placeholder-zinc-400 outline-none flex-1 text-zinc-300"
                 />
